@@ -23,8 +23,8 @@ def main():
     ticker = "^GSPC"
     edited_ticker = ticker.replace("^", "")
     start_date = "1950-01-01"
-    # end_date = (get_previous_trading_day() + timedelta(days=1)).strftime('%Y-%m-%d')
-    end_date = "2024-11-08"
+    end_date = (get_previous_trading_day() + timedelta(days=1)).strftime('%Y-%m-%d')
+    # end_date = "2024-11-08"
     
     # Fetch market data
     market_data = fetch_market_data(ticker, start_date, end_date)
@@ -412,70 +412,70 @@ def output_to_database(data):
             print("First few rows of DataFrame:")
             print(data_reset.head())
 
-def telegram_messenger():
-    # Telegram Bot API token and Channel ID
-    bot_token = '7328648943:AAH3gHyGf2xgjxBfzPd05F_7IagASgs-Dj0'
-    channel_id = '-1002309744206'
+# def telegram_messenger():
+#     # Telegram Bot API token and Channel ID
+#     bot_token = '7328648943:AAH3gHyGf2xgjxBfzPd05F_7IagASgs-Dj0'
+#     channel_id = '-1002309744206'
 
-    # Define the path to your SQLite database
-    database_path = r"C:\Users\NicholasRatti\OneDrive - Fernandina Capital, LLC\Fernandina Capital\Projects\Active\Python\Markov_Regime_Switching_Model\daily\output\financial_model.db"
+#     # Define the path to your SQLite database
+#     database_path = r"C:\Users\NicholasRatti\OneDrive - Fernandina Capital, LLC\Fernandina Capital\Projects\Active\Python\Markov_Regime_Switching_Model\daily\output\financial_model.db"
 
-    # Connect to the database
-    conn = sqlite3.connect(database_path)
+#     # Connect to the database
+#     conn = sqlite3.connect(database_path)
 
-    # Query the last two rows from 'Adjusted_Market_Regime' and 'Date' columns
-    query = """
-    SELECT Date, Adjusted_Market_Regime, Portfolio_Exposure 
-    FROM financial_data 
-    ORDER BY rowid DESC 
-    LIMIT 2
-    """  # Make sure 'financial_data' is the correct table name
+#     # Query the last two rows from 'Adjusted_Market_Regime' and 'Date' columns
+#     query = """
+#     SELECT Date, Adjusted_Market_Regime, Portfolio_Exposure 
+#     FROM financial_data 
+#     ORDER BY rowid DESC 
+#     LIMIT 2
+#     """  # Make sure 'financial_data' is the correct table name
 
-    # Execute query and load into a DataFrame
-    data = pd.read_sql_query(query, conn)
+#     # Execute query and load into a DataFrame
+#     data = pd.read_sql_query(query, conn)
 
-    # Close the database connection
-    conn.close()
+#     # Close the database connection
+#     conn.close()
 
-    # Initialize the message variable each time the code runs with bold header
-    message = "<b>Your Daily Portfolio Exposure Update</b>\n\n"  # Reset message here
-    labels = ["Tomorrow's Market Regime", "Today's Market Regime"]
+#     # Initialize the message variable each time the code runs with bold header
+#     message = "<b>Your Daily Portfolio Exposure Update</b>\n\n"  # Reset message here
+#     labels = ["Tomorrow's Market Regime", "Today's Market Regime"]
 
-    # Loop through the DataFrame and format the message
-    for index, row in data.iloc[::-1].iterrows():  # Reverse order for Previous Day first
-        # Format Date
-        from datetime import datetime, timedelta
+#     # Loop through the DataFrame and format the message
+#     for index, row in data.iloc[::-1].iterrows():  # Reverse order for Previous Day first
+#         # Format Date
+#         from datetime import datetime, timedelta
 
-        # Parse the date and add 1 day
-        formatted_date = (datetime.strptime(row['Date'], '%Y-%m-%d %H:%M:%S') + timedelta(days=1)).strftime('%m/%d/%Y')
+#         # Parse the date and add 1 day
+#         formatted_date = (datetime.strptime(row['Date'], '%Y-%m-%d %H:%M:%S') + timedelta(days=1)).strftime('%m/%d/%Y')
 
-        formatted_date = formatted_date.lstrip("0").replace("/0", "/")  # Remove leading zeros from month and day
+#         formatted_date = formatted_date.lstrip("0").replace("/0", "/")  # Remove leading zeros from month and day
 
-        # Add the labeled message for each row with line breaks for better formatting
-        message += f"<u>{labels[index]}</u>\n"
-        message += f"<i>Date</i>: {formatted_date}\n"
-        message += f"<i>Adjusted Market Regime</i>: {row['Adjusted_Market_Regime']}\n"
-        message += f"<i>Portfolio Exposure</i>: {row['Portfolio_Exposure'] * 100:.0f}%\n\n" # Format Portfolio_Exposure as a percentage with 2 decimal places
+#         # Add the labeled message for each row with line breaks for better formatting
+#         message += f"<u>{labels[index]}</u>\n"
+#         message += f"<i>Date</i>: {formatted_date}\n"
+#         message += f"<i>Adjusted Market Regime</i>: {row['Adjusted_Market_Regime']}\n"
+#         message += f"<i>Portfolio Exposure</i>: {row['Portfolio_Exposure'] * 100:.0f}%\n\n" # Format Portfolio_Exposure as a percentage with 2 decimal places
 
 
-    # Telegram API URL
-    api_url = f'https://api.telegram.org/bot{bot_token}/sendMessage'
+#     # Telegram API URL
+#     api_url = f'https://api.telegram.org/bot{bot_token}/sendMessage'
 
-    # Payload to send with HTML formatting enabled
-    payload = {
-        'chat_id': channel_id,
-        'text': message,  # Combine with the rest of your message
-        'parse_mode': 'HTML'  # Enables HTML for bold formatting
-    }
+#     # Payload to send with HTML formatting enabled
+#     payload = {
+#         'chat_id': channel_id,
+#         'text': message,  # Combine with the rest of your message
+#         'parse_mode': 'HTML'  # Enables HTML for bold formatting
+#     }
 
-    # Send the request
-    response = requests.post(api_url, json=payload)
+#     # Send the request
+#     response = requests.post(api_url, json=payload)
 
-    # Check the response
-    if response.status_code == 200:
-        print('Message sent successfully!')
-    else:
-        print(f'Failed to send message. Error: {response.text}')
+#     # Check the response
+#     if response.status_code == 200:
+#         print('Message sent successfully!')
+#     else:
+#         print(f'Failed to send message. Error: {response.text}')
             
 if __name__ == "__main__":
     main()
